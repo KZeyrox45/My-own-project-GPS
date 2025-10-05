@@ -54,7 +54,3 @@ data/batch_results/*.json
 # Coverage
 .coverage
 htmlcov/
-
-# Other
-.qodo
-sample.txt

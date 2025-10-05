@@ -10,6 +10,9 @@ Chức năng:
 
 from core import GPSTargetSystem
 from visualization.plot_utils import MapVisualizer
+from visualization.webmap_viewer import WebMapViewer
+from visualization.export_utils import GeoJSONExporter
+from pathlib import Path
 import matplotlib.pyplot as plt
 
 def get_user_input():
@@ -25,6 +28,29 @@ def get_user_input():
     distance = float(input("Khoảng cách (mét): "))
     
     return obs_lat, obs_lon, obs_alt, azimuth, elevation, distance
+
+def save_results(observer_pos, target_pos):
+    """Lưu kết quả tính toán"""
+    # Tạo thư mục output
+    output_dir = Path("output")
+    output_dir.mkdir(exist_ok=True)
+    
+    # Lưu bản đồ web
+    web_viewer = WebMapViewer()
+    web_viewer.plot_target_scenario(
+        observer_pos=observer_pos,
+        target_pos=target_pos,
+        save_path="output/scenario_map.html",
+        show=True
+    )
+    
+    # Xuất GeoJSON
+    exporter = GeoJSONExporter()
+    exporter.export_target_scenario(
+        observer_pos=observer_pos,
+        target_pos=target_pos,
+        output_path="output/scenario.geojson"
+    )
 
 def main():
     """Hàm chính của chương trình"""
@@ -60,7 +86,15 @@ def main():
         # Hiển thị profile độ cao
         visualizer.plot_elevation_profile(observer_pos, target_pos)
         
+        # Hiển thị MatPlotLib plots
         plt.show()
+        
+        # Lưu và hiển thị kết quả trên web
+        save_results(observer_pos, target_pos)
+        
+        print("\nKết quả đã được lưu trong thư mục 'output':")
+        print("- Bản đồ web: output/scenario_map.html")
+        print("- GeoJSON: output/scenario.geojson")
         
     except ValueError as e:
         print(f"\nLỗi: {e}")
