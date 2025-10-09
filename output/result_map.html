@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Target Calculation Result</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+            z-index: 1000;
+            min-width: 280px;
+            max-width: 90%;
+        }
+        
+        .info-panel h2 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 18px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        
+        .info-item {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #34495e;
+            margin-right: 10px;
+        }
+        
+        .info-value {
+            color: #7f8c8d;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .observer-badge {
+            background: #27ae60;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .target-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .metric-group {
+            background: #ecf0f1;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .metric-group h3 {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .timestamp {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 11px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        @media (max-width: 768px) {
+            .info-panel {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 15px;
+            }
+        }
+        
+        /* Custom marker styles */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+        }
+        
+        .leaflet-popup-content {
+            margin: 15px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="info-panel">
+        <h2>📍 Mission Data</h2>
+        
+        <div class="info-item">
+            <span class="info-label">Observer:</span>
+            <span class="observer-badge">ACTIVE</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Lat:</span>
+            <span class="info-value">10.762622°</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Lon:</span>
+            <span class="info-value">106.660172°</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Alt:</span>
+            <span class="info-value">10.0m</span>
+        </div>
+        
+        
+        <div class="metric-group">
+            <h3>🎯 Target Information</h3>
+            <div class="info-item">
+                <span class="info-label">Distance:</span>
+                <span class="info-value">0.87 km</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Bearing:</span>
+                <span class="info-value">44.8°</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Elevation:</span>
+                <span class="info-value">30.0°</span>
+            </div>
+        </div>
+        
+        
+        <div class="timestamp">
+            Generated: 2025-10-08 18:12:35
+        </div>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([10.765389836614643, 106.6629712679596], 13);
+        
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Observer data
+        const observer = {"lat": 10.762622, "lon": 106.660172, "alt": 10.0};
+        
+        // Observer marker
+        const observerIcon = L.divIcon({
+            html: '<div style="background:#27ae60;width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>',
+            className: '',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+        
+        const observerMarker = L.marker([observer.lat, observer.lon], {
+            icon: observerIcon
+        }).addTo(map);
+        
+        observerMarker.bindPopup(`
+            <div style="font-family:Arial;min-width:200px;">
+                <h3 style="color:#27ae60;margin:0 0 10px 0;">👁️ Observer</h3>
+                <table style="width:100%;font-size:12px;">
+                    <tr><td><b>Latitude:</b></td><td>${observer.lat.toFixed(6)}°</td></tr>
+                    <tr><td><b>Longitude:</b></td><td>${observer.lon.toFixed(6)}°</td></tr>
+                    <tr><td><b>Altitude:</b></td><td>${observer.alt.toFixed(1)}m</td></tr>
+                </table>
+            </div>
+        `);
+        
+        // Target marker (if exists)
+        const target = {"lat": 10.768157673229286, "lon": 106.66577053591921, "alt": 510.05897419527173};
+        if (target) {
+            const targetIcon = L.divIcon({
+                html: '<div style="background:#e74c3c;width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>',
+                className: '',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+            
+            const targetMarker = L.marker([target.lat, target.lon], {
+                icon: targetIcon
+            }).addTo(map);
+            
+            targetMarker.bindPopup(`
+                <div style="font-family:Arial;min-width:200px;">
+                    <h3 style="color:#e74c3c;margin:0 0 10px 0;">🎯 Target</h3>
+                    <table style="width:100%;font-size:12px;">
+                        <tr><td><b>Latitude:</b></td><td>${target.lat.toFixed(6)}°</td></tr>
+                        <tr><td><b>Longitude:</b></td><td>${target.lon.toFixed(6)}°</td></tr>
+                        <tr><td><b>Altitude:</b></td><td>${target.alt.toFixed(1)}m</td></tr>
+                        <tr><td colspan="2"><hr style="margin:5px 0;"></td></tr>
+                        <tr><td><b>Distance:</b></td><td>0.87 km</td></tr>
+                        <tr><td><b>Bearing:</b></td><td>44.8°</td></tr>
+                        <tr><td><b>Elevation:</b></td><td>30.0°</td></tr>
+                    </table>
+                </div>
+            `);
+            
+            // Draw line
+            const line = L.polyline([
+                [observer.lat, observer.lon],
+                [target.lat, target.lon]
+            ], {
+                color: '#3498db',
+                weight: 2,
+                opacity: 0.7,
+                dashArray: '10, 5'
+            }).addTo(map);
+            
+            // Fit bounds
+            map.fitBounds(line.getBounds(), {padding: [50, 50]});
+        }
+        
+        // Scale control
+        L.control.scale({imperial: false}).addTo(map);
+    </script>
+</body>
+</html>

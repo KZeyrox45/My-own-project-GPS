@@ -6,6 +6,7 @@ Chức năng:
 - Xuất dữ liệu sang GeoJSON
 - Tạo style cho các đối tượng trên bản đồ
 - Chuyển đổi định dạng dữ liệu
+
 """
 
 import json

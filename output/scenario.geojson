@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.660172,
+          10.762622,
+          10.0
+        ]
+      },
+      "properties": {
+        "name": "Observer",
+        "type": "observer",
+        "altitude": 10.0,
+        "timestamp": "2025-10-07T18:51:49.759172"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6666124670235,
+          10.733669488546036,
+          6377588.492590819
+        ]
+      },
+      "properties": {
+        "name": "Target",
+        "type": "target",
+        "altitude": 6377588.492590819,
+        "timestamp": "2025-10-07T18:51:49.759189"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            106.660172,
+            10.762622
+          ],
+          [
+            106.6666124670235,
+            10.733669488546036
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Line of sight",
+        "type": "sight_line"
+      }
+    }
+  ]
+}
